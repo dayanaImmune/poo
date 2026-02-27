@@ -1,0 +1,62 @@
+class Login:
+    def __init__(self):
+        
+        self.credenciales = {"user@gmail.com": "1234"}
+
+    def validar_acceso(self, email, password):
+        if email in self.credenciales and self.credenciales[email] == password:
+            print(f"\n Login exitoso. ¡Bienvenido, {email}!")
+            return True
+        else:
+            print("\n Error: Email o contraseña incorrectos.")
+            return False
+
+class Guardar(Login):
+    def __init__(self):
+        super().__init__()
+        self.lista_usuarios = [] 
+
+    def añadir_usuario(self, usuario_obj):
+        self.lista_usuarios.append(usuario_obj)
+        self.credenciales[usuario_obj.email] = usuario_obj.password
+        print(f"Usuario {usuario_obj.email} registrado con éxito.")
+
+    def editar_usuario(self, email_target, nuevo_password):
+        for user in self.lista_usuarios:
+            if user.email == email_target:
+                user.password = nuevo_password
+                self.credenciales[email_target] = nuevo_password
+                print(f" Contraseña de {email_target} actualizada.")
+                return
+        print("Usuario no encontrado.")
+
+class Usuario(Guardar):
+    def __init__(self, email, password):
+        super().__init__()
+        self.email = email
+        self.password = password
+
+    def registrarse(self, sistema):
+        sistema.añadir_usuario(self)
+
+    def hacer_login(self, sistema):
+        return sistema.validar_acceso(self.email, self.password)
+
+# ---DEMO ---
+
+sistema_central = Guardar()
+
+
+nuevo_profe = Usuario("profe_python@gmail.com", "secure99")
+
+
+nuevo_profe.registrarse(sistema_central)
+
+
+sistema_central.validar_acceso("user@gmail.com", "1234") 
+nuevo_profe.hacer_login(sistema_central) 
+
+
+sistema_central.editar_usuario("profe_python@gmail.com", "new_pass_123")
+sistema_central.validar_acceso("profe_python@gmail.com", "new_pass_123")
+sistema_central.validar_acceso("profe_python@gmail.com", "new_pass_13")
